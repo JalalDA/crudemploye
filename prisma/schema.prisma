@@ -1,0 +1,174 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Avatars {
+  id         Int       @id @default(autoincrement())
+  name       String?   @db.VarChar(255)
+  image_url  String?   @db.VarChar(255)
+  deleted_at DateTime? @db.Timestamptz(6)
+  createdAt  DateTime  @db.Timestamptz(6)
+  updatedAt  DateTime  @db.Timestamptz(6)
+  avatar_id  Int?
+  Users      Users?    @relation(fields: [avatar_id], references: [id])
+}
+
+model Books {
+  id           Int        @id @default(autoincrement())
+  title        String     @db.VarChar(255)
+  description  String?    @db.VarChar(2000)
+  image_url    String?    @db.VarChar(255)
+  release_year Int?
+  price        String?    @db.VarChar(255)
+  total_page   Int?
+  thickness    String?    @db.VarChar(255)
+  category_id  Int
+  createdAt    DateTime   @db.Timestamptz(6)
+  updatedAt    DateTime   @db.Timestamptz(6)
+  Categories   Categories @relation(fields: [category_id], references: [id], onDelete: NoAction)
+}
+
+model Categories {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(255)
+  createdAt DateTime @db.Timestamptz(6)
+  updatedAt DateTime @db.Timestamptz(6)
+  Books     Books[]
+}
+
+model Comments {
+  comment_id Int       @id @default(autoincrement())
+  user_id    Int
+  post_id    Int?
+  fill       String?   @db.VarChar(255)
+  deleted_at DateTime? @db.Timestamptz(6)
+  createdAt  DateTime  @db.Timestamptz(6)
+  updatedAt  DateTime  @db.Timestamptz(6)
+  Posts      Posts?    @relation(fields: [post_id], references: [id], onDelete: Cascade)
+  Users      Users     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model Dosens {
+  id                 Int       @id @default(autoincrement())
+  photo              String?   @db.VarChar(255)
+  nama               String?   @db.VarChar(255)
+  nidn               String?   @db.VarChar(255)
+  jenis_kelamin      String?   @db.VarChar(255)
+  tempat_lahir       String?   @db.VarChar(255)
+  tanggal_lahir      String?   @db.VarChar(255)
+  ibu_kandung        String?   @db.VarChar(255)
+  email              String?   @db.VarChar(255)
+  alamat             String?   @db.VarChar(255)
+  RT                 String?   @db.VarChar(255)
+  RW                 String?   @db.VarChar(255)
+  desa               String?   @db.VarChar(255)
+  kecamatan          String?   @db.VarChar(255)
+  provinsi           String?   @db.VarChar(255)
+  kodepos            String?   @db.VarChar(255)
+  nomor_telephone    String?   @db.VarChar(255)
+  status_perkawinan  String?   @db.VarChar(255)
+  nama_pasangan      String?   @db.VarChar(255)
+  pekerjaan_pasangan String?   @db.VarChar(255)
+  nik                String?   @db.VarChar(255)
+  agama              String?   @db.VarChar(255)
+  kewarganegaraan    String?   @db.VarChar(255)
+  nama_keilmuan      String?   @db.VarChar(255)
+  deskripsi_keilmuan String?   @db.VarChar(255)
+  code_keilmuan      String?   @db.VarChar(255)
+  program_studi      String?   @db.VarChar(255)
+  nip                String?   @db.VarChar(255)
+  status_kepegawaian String?   @db.VarChar(255)
+  status_keaktifan   String?   @db.VarChar(255)
+  no_sk_cpns         String?   @db.VarChar(255)
+  no_sk_tmmd         String?   @db.VarChar(255)
+  pangkat_golongan   String?   @db.VarChar(255)
+  sumber_gaji        String?   @db.VarChar(255)
+  deleted_at         DateTime? @db.Timestamptz(6)
+  createdAt          DateTime  @db.Timestamptz(6)
+  updatedAt          DateTime  @db.Timestamptz(6)
+  sk_kepangkatan     String?   @db.VarChar
+  sk_jabatan         String?   @db.VarChar
+  jja                String?   @db.VarChar
+  user_id            Int?
+}
+
+model Employees {
+  id         Int       @id @default(autoincrement())
+  fullName   String?   @db.VarChar(255)
+  nbm        String?   @db.VarChar(255)
+  jabatan    String?   @db.VarChar(255)
+  tmt        String?   @db.VarChar(255)
+  sk_url     String?   @db.VarChar(255)
+  user_id    Int?
+  deleted_at DateTime? @db.Timestamptz(6)
+  createdAt  DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt  DateTime  @default(now()) @db.Timestamptz(6)
+}
+
+model Likes {
+  id         Int       @id @default(autoincrement())
+  post_id    Int?
+  user_id    Int?
+  deleted_at DateTime? @db.Timestamptz(6)
+  createdAt  DateTime  @db.Timestamptz(6)
+  updatedAt  DateTime  @db.Timestamptz(6)
+  Posts      Posts?    @relation(fields: [post_id], references: [id], onDelete: Cascade)
+  Users      Users?    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model Posts {
+  id         Int        @id @default(autoincrement())
+  fill       String     @db.VarChar(2000)
+  user_id    Int
+  createdAt  DateTime   @db.Timestamptz(6)
+  updatedAt  DateTime   @db.Timestamptz(6)
+  deleted_at DateTime?  @db.Timestamptz(6)
+  Comments   Comments[]
+  Likes      Likes[]
+  Users      Users      @relation(fields: [user_id], references: [id], onDelete: NoAction)
+}
+
+model Users {
+  id          Int        @id @default(autoincrement())
+  username    String?    @unique @db.VarChar(255)
+  avatar_id   Int?
+  email       String     @unique @db.VarChar(255)
+  phoneNumber BigInt?
+  password    String?    @db.VarChar(255)
+  photo       String?    @db.VarChar(255)
+  address     String?    @db.VarChar(255)
+  dateofBirth String?    @db.VarChar(255)
+  point       BigInt?    @default(0)
+  isActive    Boolean?   @default(false)
+  isAdmin     Boolean?   @default(false)
+  firstname   String?    @db.VarChar(255)
+  lastname    String?    @db.VarChar(255)
+  gender      String?    @db.VarChar(255)
+  fcmToken    String?    @db.VarChar(255)
+  deleted_at  DateTime?  @db.Timestamptz(6)
+  createdAt   DateTime   @db.Timestamptz(6)
+  updatedAt   DateTime   @db.Timestamptz(6)
+  passcode    Int?
+  employe_id  BigInt?
+  dosen_id    BigInt?
+  Avatars     Avatars[]
+  Comments    Comments[]
+  Likes       Likes[]
+  Posts       Posts[]
+}
+
+model Mahasiswa {
+  id             Int       @id @default(autoincrement())
+  NIM            Int?       @db.Integer
+  username       String?   @unique @db.VarChar(255)
+  gender         String?   @db.VarChar(255)
+  dateofBirth    DateTime? @db.Timestamptz(6)
+  addressOfBirth String?   @db.VarChar(255)
+  address        String?   @db.VarChar(255)
+  startYear      Int?      @db.Integer
+}
